@@ -1,0 +1,11 @@
+# General
+**/.env
+# ...
+
+# Python related
+backend/.venv
+# ...
+
+# JavaScript related
+frontend/node_modules/
+# ...
