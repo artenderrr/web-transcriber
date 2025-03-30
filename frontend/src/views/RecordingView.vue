@@ -1,3 +1,5 @@
 <template>
-  <p>RecordingView</p>
+  <div class="wrapper">
+    <p>RecordingView</p>
+  </div>
 </template>
