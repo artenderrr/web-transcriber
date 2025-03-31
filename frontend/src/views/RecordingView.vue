@@ -1,20 +1,16 @@
 <script setup>
-import { ref } from "vue";
 import RecordButton from "../components/RecordButton.vue";
+import store from "../store";
+import router from "../router";
 
-const audioUrl = ref(null);
+function onFinishRecording(newAudioUrl) {
+  store.audioUrl = newAudioUrl;
+  router.push("/player");
+}
 </script>
 
 <template>
-  <div class="wrapper flex-column">
-    <RecordButton @finish-recording="newAudioUrl => audioUrl = newAudioUrl"/>
-    <audio v-if="audioUrl" :src="audioUrl" controls></audio>
+  <div class="wrapper">
+    <RecordButton @finish-recording="onFinishRecording"/>
   </div>
 </template>
-
-<style scoped>
-.flex-column {
-  flex-direction: column;
-  gap: 1rem;
-}
-</style>
