@@ -1,5 +1,9 @@
+<script setup>
+import RecordButton from "../components/RecordButton.vue";
+</script>
+
 <template>
   <div class="wrapper">
-    <p>RecordingView</p>
+    <RecordButton />
   </div>
 </template>

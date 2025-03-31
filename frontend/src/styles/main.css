@@ -24,3 +24,15 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+@media (max-width: 400px) {
+  html {
+    font-size: .9rem;
+  }
+}
+
+@media (max-width: 350px) {
+  html {
+    font-size: .8rem;
+  }
+}
