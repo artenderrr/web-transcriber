@@ -1,11 +1,55 @@
 <script setup>
 import { ref } from "vue";
 
+const emit = defineEmits(["finish-recording"]);
+
 const isRecording = ref(false);
+
+let stream;
+let recorder;
+
+async function onClick() {
+  isRecording.value = !isRecording.value;
+
+  if (isRecording.value) {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.error("This browser doesn't support audio recording!");
+      isRecording.value = false;
+      return;
+    }
+
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recorder = new MediaRecorder(stream);
+
+      const audioChunks = [];
+
+      recorder.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+      }
+
+      recorder.onstop = (event) => {
+        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        stream.getTracks().forEach(track => track.stop());
+        emit("finish-recording", audioUrl);
+      }
+
+      recorder.start();
+
+    } catch (error) {
+      console.error("Failed to access microphone!", error);
+      isRecording.value = false;
+    }
+
+  } else {
+    recorder.stop();
+  }
+}
 </script>
 
 <template>
-  <button @click="isRecording = !isRecording">
+  <button @click="onClick">
     <div class="circle">
       <div class="circle" :class="{ pulsing: isRecording }"></div>
     </div>
