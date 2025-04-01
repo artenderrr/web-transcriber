@@ -2,7 +2,13 @@
 import PlaybackBar from "./PlaybackBar.vue";
 import PlaybackControls from "./PlaybackControls.vue";
 
-defineProps(["src"]);
+const props = defineProps(["src"]);
+
+const audio = new Audio(props.src);
+
+function onTogglePlayback(isPaused) {
+  isPaused ? audio.pause() : audio.play();
+}
 </script>
 
 <template>
@@ -10,7 +16,7 @@ defineProps(["src"]);
     <div class="playback-bar-container">
       <PlaybackBar :progress="20" />
     </div>
-    <PlaybackControls />
+    <PlaybackControls @toggle-playback="onTogglePlayback" />
   </div>
 </template>
 

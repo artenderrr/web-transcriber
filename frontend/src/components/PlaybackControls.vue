@@ -1,10 +1,13 @@
 <script setup>
 import { ref } from "vue";
 
+const emit = defineEmits(["toggle-playback"]);
+
 const isPaused = ref(true);
 
 function togglePlayback() {
   isPaused.value = !isPaused.value;
+  emit("toggle-playback", isPaused.value);
 }
 </script>
 
