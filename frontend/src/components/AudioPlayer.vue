@@ -10,9 +10,13 @@ const audio = new Audio(props.src);
 const progress = ref(0);
 const playbackControls = useTemplateRef("playback-controls");
 
+function syncProgress() {
+  progress.value = audio.currentTime / (store.audioDuration / 100);
+}
+
 function renderProgress() {
   if (!audio.paused) {
-    progress.value = audio.currentTime / (store.audioDuration / 100);
+    syncProgress();
     setTimeout(renderProgress, 25);
   } else {
     progress.value = audio.currentTime === audio.duration ? 100 : progress.value;
@@ -27,6 +31,15 @@ function onTogglePlayback(isPaused) {
   renderProgress();
 }
 
+function onRewind(direction) {
+  if (direction === "back") {
+    audio.currentTime -= 5;
+  } else if (direction === "forward") {
+    audio.currentTime += 5;
+  }
+  syncProgress();
+}
+
 defineExpose({ audio });
 </script>
 
@@ -35,7 +48,10 @@ defineExpose({ audio });
     <div class="playback-bar-container">
       <PlaybackBar v-bind="{ progress }" />
     </div>
-    <PlaybackControls ref="playback-controls" @toggle-playback="onTogglePlayback" />
+    <PlaybackControls
+    ref="playback-controls"
+    @toggle-playback="onTogglePlayback"
+    @rewind="onRewind" />
   </div>
 </template>
 
