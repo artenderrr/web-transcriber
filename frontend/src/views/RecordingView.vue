@@ -3,8 +3,9 @@ import RecordButton from "../components/RecordButton.vue";
 import store from "../store";
 import router from "../router";
 
-function onFinishRecording(newAudioUrl) {
-  store.audioUrl = newAudioUrl;
+function onFinishRecording(audioData) {
+  store.audioUrl = audioData.audioUrl;
+  store.audioDuration = audioData.audioDuration;
   router.push("/player");
 }
 </script>

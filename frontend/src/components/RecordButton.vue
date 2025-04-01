@@ -7,6 +7,8 @@ const isRecording = ref(false);
 
 let stream;
 let recorder;
+let recordingStartedAt;
+let audioDuration;
 
 async function onClick() {
   isRecording.value = !isRecording.value;
@@ -32,10 +34,11 @@ async function onClick() {
         const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
         const audioUrl = URL.createObjectURL(audioBlob);
         stream.getTracks().forEach(track => track.stop());
-        emit("finish-recording", audioUrl);
+        emit("finish-recording", { audioUrl, audioDuration });
       }
 
       recorder.start();
+      recordingStartedAt = Date.now();
 
     } catch (error) {
       console.error("Failed to access microphone!", error);
@@ -44,6 +47,7 @@ async function onClick() {
 
   } else {
     recorder.stop();
+    audioDuration = (Date.now() - recordingStartedAt) / 1000;
   }
 }
 </script>
