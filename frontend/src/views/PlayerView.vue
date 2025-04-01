@@ -1,12 +1,13 @@
 <script setup>
 import RestartButton from "../components/RestartButton.vue";
+import AudioPlayer from "../components/AudioPlayer.vue";
 import store from "../store";
 </script>
 
 <template>
   <div class="wrapper">
     <RestartButton />
-    <audio v-if="store.audioUrl" :src="store.audioUrl" controls></audio>
+    <AudioPlayer :src="store.audioUrl" />
   </div>
 </template>
 
