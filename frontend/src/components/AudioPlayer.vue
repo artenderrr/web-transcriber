@@ -7,7 +7,9 @@ defineProps(["src"]);
 
 <template>
   <div class="container">
-    <PlaybackBar :progress="20" />
+    <div class="playback-bar-container">
+      <PlaybackBar :progress="20" />
+    </div>
     <PlaybackControls />
   </div>
 </template>
@@ -17,7 +19,7 @@ defineProps(["src"]);
   background-color: #2b2b2b;
   
   width: 20rem;
-  height: 12rem;
+  height: 10rem;
 
   display: flex;
   flex-direction: column;
@@ -28,5 +30,14 @@ defineProps(["src"]);
   border-radius: 1.5rem;
 
   padding: 1rem;
+}
+
+.playback-bar-container {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
