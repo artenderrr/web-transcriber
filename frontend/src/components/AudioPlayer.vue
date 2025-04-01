@@ -14,6 +14,10 @@ function syncProgress() {
   progress.value = audio.currentTime / (store.audioDuration / 100);
 }
 
+function syncCurrentTime() {
+  audio.currentTime = progress.value * (store.audioDuration / 100);
+}
+
 function renderProgress() {
   if (!audio.paused) {
     syncProgress();
@@ -40,13 +44,18 @@ function onRewind(direction) {
   syncProgress();
 }
 
+function onSetProgress(newProgress) {
+  progress.value = newProgress;
+  syncCurrentTime();
+}
+
 defineExpose({ audio });
 </script>
 
 <template>
   <div class="container">
     <div class="playback-bar-container">
-      <PlaybackBar v-bind="{ progress }" />
+      <PlaybackBar v-bind="{ progress }" @set-progress="onSetProgress" />
     </div>
     <PlaybackControls
     ref="playback-controls"

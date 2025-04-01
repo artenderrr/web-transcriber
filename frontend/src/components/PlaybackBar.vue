@@ -1,9 +1,23 @@
 <script setup>
+import { useTemplateRef } from "vue";
+
 defineProps(["progress"]);
+
+const emit = defineEmits(["set-progress"]);
+
+const playbackBar = useTemplateRef("playback-bar");
+
+function onClick(event) {
+  const playbackBarRect = playbackBar.value.getBoundingClientRect();
+  const x = event.x - playbackBarRect.x;
+  const newProgress = x / (playbackBarRect.width / 100);
+
+  emit("set-progress", newProgress);
+}
 </script>
 
 <template>
-  <div class="playback-bar">
+  <div ref="playback-bar" class="playback-bar" @click="onClick">
     <div class="playback-progress" :style="{ width: progress + '%' }"></div>
   </div>
 </template>
@@ -18,6 +32,8 @@ defineProps(["progress"]);
   border-radius: .5rem;
 
   overflow: hidden;
+
+  cursor: pointer;
 }
 
 .playback-progress {
