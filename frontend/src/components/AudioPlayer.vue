@@ -1,22 +1,35 @@
 <script setup>
+import { ref, useTemplateRef } from "vue";
 import PlaybackBar from "./PlaybackBar.vue";
 import PlaybackControls from "./PlaybackControls.vue";
 
 const props = defineProps(["src"]);
 
 const audio = new Audio(props.src);
+const progress = ref(0);
+const playbackControls = useTemplateRef("playback-controls");
+
+function renderProgress() {
+  if (!audio.paused) {
+    progress.value = audio.currentTime / (audio.duration / 100);
+    setTimeout(renderProgress, 500);
+  } else {
+    playbackControls.value.isPaused = true;
+  }
+}
 
 function onTogglePlayback(isPaused) {
   isPaused ? audio.pause() : audio.play();
+  renderProgress();
 }
 </script>
 
 <template>
   <div class="container">
     <div class="playback-bar-container">
-      <PlaybackBar :progress="20" />
+      <PlaybackBar v-bind="{ progress }" />
     </div>
-    <PlaybackControls @toggle-playback="onTogglePlayback" />
+    <PlaybackControls ref="playback-controls" @toggle-playback="onTogglePlayback" />
   </div>
 </template>
 

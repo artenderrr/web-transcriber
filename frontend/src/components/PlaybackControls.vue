@@ -9,6 +9,8 @@ function togglePlayback() {
   isPaused.value = !isPaused.value;
   emit("toggle-playback", isPaused.value);
 }
+
+defineExpose({ isPaused });
 </script>
 
 <template>
