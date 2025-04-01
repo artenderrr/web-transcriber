@@ -13,8 +13,9 @@ const playbackControls = useTemplateRef("playback-controls");
 function renderProgress() {
   if (!audio.paused) {
     progress.value = audio.currentTime / (store.audioDuration / 100);
-    setTimeout(renderProgress, 500);
+    setTimeout(renderProgress, 25);
   } else {
+    progress.value = audio.currentTime === audio.duration ? 100 : progress.value;
     playbackControls.value.isPaused = true;
   }
 }

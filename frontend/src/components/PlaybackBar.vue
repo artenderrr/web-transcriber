@@ -24,5 +24,7 @@ defineProps(["progress"]);
   background-color: #5b5b5b;
 
   height: 100%;
+
+  transition: width .125s;
 }
 </style>
