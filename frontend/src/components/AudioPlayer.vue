@@ -2,6 +2,7 @@
 import { ref, useTemplateRef } from "vue";
 import PlaybackBar from "./PlaybackBar.vue";
 import PlaybackControls from "./PlaybackControls.vue";
+import store from "../store";
 
 const props = defineProps(["src"]);
 
@@ -11,7 +12,7 @@ const playbackControls = useTemplateRef("playback-controls");
 
 function renderProgress() {
   if (!audio.paused) {
-    progress.value = audio.currentTime / (audio.duration / 100);
+    progress.value = audio.currentTime / (store.audioDuration / 100);
     setTimeout(renderProgress, 500);
   } else {
     playbackControls.value.isPaused = true;
