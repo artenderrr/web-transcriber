@@ -2,7 +2,10 @@
 import router from "../router";
 import store from "../store";
 
+const emit = defineEmits(["restart"]);
+
 function onClick() {
+  emit("restart");
   URL.revokeObjectURL(store.audioUrl);
   router.push("/");
 }

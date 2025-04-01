@@ -16,7 +16,9 @@ function renderProgress() {
     setTimeout(renderProgress, 25);
   } else {
     progress.value = audio.currentTime === audio.duration ? 100 : progress.value;
-    playbackControls.value.isPaused = true;
+    if (playbackControls.value) {
+      playbackControls.value.isPaused = true;
+    } 
   }
 }
 
@@ -24,6 +26,8 @@ function onTogglePlayback(isPaused) {
   isPaused ? audio.pause() : audio.play();
   renderProgress();
 }
+
+defineExpose({ audio });
 </script>
 
 <template>
