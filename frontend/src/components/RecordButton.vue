@@ -1,9 +1,23 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 const emit = defineEmits(["finish-recording"]);
 
 const isRecording = ref(false);
+
+let supportedMimeType;
+
+function defineSupportedMimeType() {
+  const types = [
+    "audio/webm;codecs=opus",
+    "audio/webm",
+    "audio/ogg;codecs=opus",
+    "audio/ogg",
+    "audio/mp4"
+  ]
+
+  supportedMimeType = types.find(type => MediaRecorder.isTypeSupported(type));
+}
 
 let stream;
 let recorder;
@@ -22,7 +36,7 @@ async function onClick() {
 
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      recorder = new MediaRecorder(stream);
+      recorder = new MediaRecorder(stream, { mimeType: supportedMimeType });
 
       const audioChunks = [];
 
@@ -31,7 +45,7 @@ async function onClick() {
       }
 
       recorder.onstop = (event) => {
-        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        const audioBlob = new Blob(audioChunks, { type: supportedMimeType });
         const audioUrl = URL.createObjectURL(audioBlob);
         stream.getTracks().forEach(track => track.stop());
         emit("finish-recording", { audioUrl, audioDuration });
@@ -50,6 +64,8 @@ async function onClick() {
     audioDuration = (Date.now() - recordingStartedAt) / 1000;
   }
 }
+
+onMounted(defineSupportedMimeType);
 </script>
 
 <template>
