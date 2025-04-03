@@ -4,6 +4,7 @@
 
 # Python related
 backend/.venv
+*.py[cod]
 # ...
 
 # JavaScript related
