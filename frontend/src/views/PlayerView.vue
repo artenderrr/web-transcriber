@@ -2,6 +2,7 @@
 import { useTemplateRef } from "vue";
 import RestartButton from "../components/RestartButton.vue";
 import AudioPlayer from "../components/AudioPlayer.vue";
+import TranscribeButton from "../components/TranscribeButton.vue";
 import store from "../store";
 
 const audioPlayer = useTemplateRef("audio-player");
@@ -15,6 +16,7 @@ function pauseAudio() {
   <div class="wrapper">
     <RestartButton @restart="pauseAudio"/>
     <AudioPlayer ref="audio-player" :src="store.audioUrl" />
+    <TranscribeButton />
   </div>
 </template>
 
