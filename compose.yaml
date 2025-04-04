@@ -13,8 +13,28 @@ services:
     ports:
       - 8000:8000
     command: /root/.local/bin/uv run uvicorn app.main:app --host 0.0.0.0 --reload
+    volumes:
+      - shared-data:/data
     develop:
       watch:
         - action: sync
           path: ./backend
           target: /app
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - 5672:5672
+  worker:
+    build: ./backend
+    environment:
+      - CELERY_WORKER_RUNNING=1
+    command: /root/.local/bin/uv run celery -A app.worker.tasks worker --pool=solo -l INFO
+    volumes:
+      - shared-data:/data
+
+volumes:
+  shared-data:

@@ -4,6 +4,7 @@
 
 # Python related
 backend/.venv
+__pycache__/
 *.py[cod]
 # ...
 
