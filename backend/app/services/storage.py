@@ -33,12 +33,13 @@ class StorageService:
         return audio_file_path
     
     @staticmethod
-    def save_transcription_result(*, filename: str, result: str) -> None:
+    def save_transcription_result(*, filename: str, result: str) -> Path:
         transcription_dir_path = (
             StorageService.data_dir_path / StorageService.transcription_dir_name
         )
-        StorageService._save_content_as_file(
+        transcription_file_path = StorageService._save_content_as_file(
             filename=filename,
             location=transcription_dir_path,
             content=result
         )
+        return transcription_file_path
