@@ -3,6 +3,7 @@ from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.responses import FileResponse
 from celery.result import AsyncResult
 from app.worker import worker
+from app.worker.tasks import clear_transcription_files
 from app.services.transcription import TranscriptionService
 
 app = FastAPI()
@@ -21,6 +22,7 @@ def get_transcription_result(task_id: str) -> FileResponse:
         transcription_file_path = cast(str, task.result)
     except AttributeError:
         raise HTTPException(status_code=404, detail="Task with provided ID doesn't exist")
+    clear_transcription_files.delay(task_id)
     return FileResponse(transcription_file_path)
 
 @app.get("/transcriptions/{task_id}/state")
