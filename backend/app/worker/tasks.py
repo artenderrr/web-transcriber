@@ -1,12 +1,16 @@
-from typing import cast
+# mypy: disable-error-code=import-untyped
+from typing import Any, cast
 import os
 import time
 from pathlib import Path
-import whisper # type: ignore
-from whisper.model import Whisper # type: ignore
+import whisper
+from whisper.model import Whisper
+from redis import Redis
 from celery import Celery
 from celery.result import AsyncResult
+from celery.signals import after_task_publish
 from app.services.storage import StorageService
+
 
 app = Celery(
     "tasks",
@@ -25,7 +29,20 @@ def load_model() -> Whisper | None:
 
 model = load_model()
 
-@app.task(track_started=True)
+redis = Redis(host="redis", port=6379, db=0)
+
+
+@after_task_publish.connect # type: ignore
+def store_task_id(headers: dict[str, Any] | None = None, **kwargs: Any) -> None:
+    if headers:
+        task_id = headers.get("id")
+        redis.set(f"task_{task_id}", 1, ex=10800)
+        print(f"[LOG] Stored task {task_id} in Redis!")
+    else:
+        print("[LOG] Failed to store task!")
+
+
+@app.task(track_started=True) # type: ignore
 def transcribe(audio_path: str) -> str:
     print(f"[LOG] Received '{audio_path}', starting transcription processs...")
     result = cast(Whisper, model).transcribe(audio_path)
@@ -44,11 +61,13 @@ def find_audio_file_path_by_stem(stem: str) -> Path:
             return audio_file_path
     raise FileNotFoundError(f"Audio with stem '{stem}' was not found")
 
-@app.task
-def clear_transcription_files(task_id: str) -> None:
+@app.task # type: ignore
+def clear_transcription_files_and_metadata(task_id: str) -> None:
     time.sleep(.1)
-    task: AsyncResult[None] = app.AsyncResult(task_id)
+    task: AsyncResult = app.AsyncResult(task_id)
     transcription_file_path = Path(cast(str, task.result))
     audio_file_path = find_audio_file_path_by_stem(transcription_file_path.stem)
     audio_file_path.unlink()
     transcription_file_path.unlink()
+    redis.delete(f"task_{task_id}")
+    print(f"[LOG] Deleted task {task_id} from Redis!")

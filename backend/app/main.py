@@ -1,12 +1,26 @@
-from typing import cast
-from fastapi import FastAPI, UploadFile, HTTPException
+from typing import Annotated, cast
+from fastapi import FastAPI, Path, UploadFile, Depends, HTTPException
 from fastapi.responses import FileResponse
-from celery.result import AsyncResult
+from redis import Redis
+from celery.result import AsyncResult # type: ignore
 from app.worker import worker
-from app.worker.tasks import clear_transcription_files
+from app.worker.tasks import clear_transcription_files_and_metadata
 from app.services.transcription import TranscriptionService
 
-app = FastAPI()
+
+app = FastAPI(title="Transcription API")
+
+redis = Redis(host="redis", port=6379, db=0)
+
+
+def existing_task(task_id: Annotated[str, Path()]) -> AsyncResult:
+    if not redis.exists(f"task_{task_id}"):
+        raise HTTPException(status_code=404, detail="Task with provided ID doesn't exist")
+    task: AsyncResult = worker.AsyncResult(task_id)
+    return task
+
+ExistingTask = Annotated[AsyncResult, Depends(existing_task)]
+
 
 @app.post("/transcriptions")
 async def request_transcription(audio: UploadFile) -> dict[str, str]:
@@ -16,20 +30,13 @@ async def request_transcription(audio: UploadFile) -> dict[str, str]:
     return {"task_id": task_id}
 
 @app.get("/transcriptions/{task_id}")
-def get_transcription_result(task_id: str) -> FileResponse:
-    task: AsyncResult[None] = worker.AsyncResult(task_id)
-    try:
-        transcription_file_path = cast(str, task.result)
-    except AttributeError:
-        raise HTTPException(status_code=404, detail="Task with provided ID doesn't exist")
-    clear_transcription_files.delay(task_id)
+def get_transcription_result(task: ExistingTask) -> FileResponse:
+    if task.state != "SUCCESS":
+        raise HTTPException(status_code=202, detail="Transcription is still in progress.")
+    transcription_file_path = cast(str, task.result)
+    clear_transcription_files_and_metadata.delay(task.id)
     return FileResponse(transcription_file_path)
 
 @app.get("/transcriptions/{task_id}/state")
-def check_transcription_state(task_id: str) -> dict[str, str]:
-    task: AsyncResult[None] = worker.AsyncResult(task_id)
-    try:
-        state = task.state
-    except AttributeError:
-        raise HTTPException(status_code=404, detail="Task with provided ID doesn't exist")
-    return {"state": state}
+def check_transcription_state(task: ExistingTask) -> dict[str, str]:
+    return {"state": task.state}
