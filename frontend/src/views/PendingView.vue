@@ -6,6 +6,57 @@ console.log(`[LOG] taskId: ${store.taskId}`);
 
 <template>
   <div class="wrapper">
-    <p>Waiting in queue...</p>
+    <svg class="hourglass" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 56 56"><path fill="currentColor" d="M16.516 49.574h22.757c2.391 0 3.82-1.312 3.82-3.843v-.61c.024-6.469-6.866-11.719-9.89-14.578c-.844-.797-1.289-1.523-1.289-2.578s.445-1.758 1.29-2.578c3-2.907 9.89-7.828 9.89-14.555v-.562c0-2.532-1.43-3.844-3.82-3.844H16.515c-2.344 0-3.633 1.312-3.633 3.633v.773c0 6.727 6.89 11.648 9.914 14.555c.844.82 1.289 1.523 1.289 2.578s-.445 1.781-1.29 2.578c-3.023 2.86-9.913 8.11-9.913 14.578v.82c0 2.32 1.289 3.633 3.633 3.633m2.437-3.21c-1.125 0-1.476-1.243-.375-2.063l8.016-5.977c.258-.21.398-.351.398-.703V26.348c0-1.266-.258-1.899-1.148-2.649c-1.336-1.125-3.867-2.906-5.016-4.523c-.469-.656-.422-1.195.164-1.195h13.992c.586 0 .633.539.164 1.195c-1.148 1.617-3.656 3.398-5.015 4.523c-.89.75-1.149 1.383-1.149 2.649V37.62c0 .352.141.492.399.703l8.039 5.977c1.101.82.726 2.062-.375 2.062Z"/></svg>
+    <div class="pending-text-container">
+      <span class="upper-text">Ваш запрос в очереди.</span>
+      <span>Пожалуйста, подождите...</span>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.wrapper {
+  flex-direction: column;
+
+  color: #5b5b5b;
+}
+
+@keyframes shake {
+  25% {
+    transform: rotate(-22.5deg);
+  }
+
+  50% {
+    transform: rotate(0);
+  }
+
+  75% {
+    transform: rotate(22.5deg);
+  }
+
+  100% {
+    transform: rotate(0);
+  }
+}
+
+.hourglass {
+  width: 5rem;
+
+  animation: shake 2s ease infinite;
+
+  transition: tranform .5s;
+}
+
+.pending-text-container {
+  font-size: 1.75rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.upper-text {
+  color: #424242;
+}
+</style>
