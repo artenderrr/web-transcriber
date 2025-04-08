@@ -1,7 +1,22 @@
 <script setup>
+import { ref, onMounted } from "vue";
+import { fetchState } from "../utils";
+import ErrorModal from "../components/ErrorModal.vue";
+import router from "../router";
 import store from "../store";
 
-console.log(`[LOG] taskId: ${store.taskId}`);
+const state = ref(null);
+
+async function poll() {
+  state.value = await fetchState(store.taskId);
+  if (state.value === "STARTED") {
+    router.push("/transcription");
+  } else if (state.value === "PENDING") {
+    setTimeout(poll, 500);
+  }
+}
+
+onMounted(poll);
 </script>
 
 <template>
@@ -11,10 +26,25 @@ console.log(`[LOG] taskId: ${store.taskId}`);
       <span class="upper-text">Ваш запрос в очереди.</span>
       <span>Пожалуйста, подождите...</span>
     </div>
+    <Transition name="fade">
+      <ErrorModal v-if="state === 'FAILURE'"
+      header-content="Ой..."
+      main-content="Что-то пошло не так. Пожалуйста, попробуйте ещё раз."
+      button-content="Ладно"
+      :button-action="() => router.back()" />
+    </Transition>
   </div>
 </template>
 
 <style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
 .wrapper {
   flex-direction: column;
 
