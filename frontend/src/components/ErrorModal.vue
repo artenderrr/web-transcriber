@@ -69,7 +69,7 @@ button {
 
   font: inherit;
 
-  border: none;
+  border: .125rem solid #c9184a;
   border-radius: .75rem;
 
   padding: .5rem;
