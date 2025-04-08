@@ -12,7 +12,7 @@ async function poll() {
   state.value = await fetchState(store.taskId);
   if (state.value === "SUCCESS") {
     const [blob, text] = await fetchResult(store.taskId);
-    store.transcriptionBlob = blob;
+    store.transcriptionUrl = URL.createObjectURL(blob);
     store.transcriptionText = text;
     router.push("/result");
   } else if (state.value === "STARTED") {
