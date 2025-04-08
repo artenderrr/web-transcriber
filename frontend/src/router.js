@@ -4,12 +4,14 @@ import RecordingView from "./views/RecordingView.vue";
 import PlayerView from "./views/PlayerView.vue";
 import PendingView from "./views/PendingView.vue";
 import TranscriptionView from "./views/TranscriptionView.vue";
+import ResultView from "./views/ResultView.vue";
 
 const routes = [
   { path: "/", component: RecordingView },
   { path: "/player", component: PlayerView },
   { path: "/pending", component: PendingView },
-  { path: "/transcription", component: TranscriptionView }
+  { path: "/transcription", component: TranscriptionView },
+  { path: "/result", component: ResultView }
 ];
 
 const router = createRouter({
