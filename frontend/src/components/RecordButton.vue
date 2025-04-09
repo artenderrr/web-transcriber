@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 
-const emit = defineEmits(["finish-recording"]);
+const emit = defineEmits(["microphone-failure", "finish-recording"]);
 
 const isRecording = ref(false);
 
@@ -31,6 +31,7 @@ async function onClick() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       console.error("This browser doesn't support audio recording!");
       isRecording.value = false;
+      emit("microphone-failure", "unsupported-browser");
       return;
     }
 
@@ -57,6 +58,7 @@ async function onClick() {
     } catch (error) {
       console.error("Failed to access microphone!", error);
       isRecording.value = false;
+      emit("microphone-failure", "no-microphone-access");
     }
 
   } else {
