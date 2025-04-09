@@ -1,16 +1,19 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { fetchState, fetchResult } from "../utils";
-import LoadingSpinner from "../components/LoadingSpinner.vue";
+import ProgressNumber from "../components/ProgressNumber.vue";
+import ProgressBar from "../components/ProgressBar.vue";
 import ErrorModal from "../components/ErrorModal.vue";
 import router from "../router";
 import store from "../store";
 
-const state = ref(null);
+const state = ref("STARTED");
+const progress = ref(0);
 
 async function poll() {
   state.value = await fetchState(store.taskId);
   if (state.value === "SUCCESS") {
+    progress.value = 100;
     const [blob, text] = await fetchResult(store.taskId);
     store.transcriptionUrl = URL.createObjectURL(blob);
     store.transcriptionText = text;
@@ -20,12 +23,32 @@ async function poll() {
   }
 }
 
-onMounted(poll);
+function updateProgress() {
+  const audioDurationInMs = store.audioDuration * 1000;
+  if (state.value === "STARTED") {
+    progress.value += 1;
+    if (progress.value < 90) {
+      const fourtyPercentOfAudioDuration = audioDurationInMs / 100 * 40;
+      const percentsPerSecond = 90 / fourtyPercentOfAudioDuration * 1000;
+      const updateSpeed = 1000 / percentsPerSecond;
+      setTimeout(updateProgress, updateSpeed);
+    } else if (progress.value >= 90 && progress.value < 99) {
+      const updateSpeed = audioDurationInMs / 100 * 10;
+      setTimeout(updateProgress, updateSpeed);
+    }
+  }
+}
+
+onMounted(() => {
+  poll();
+  updateProgress();
+})
 </script>
 
 <template>
   <div class="wrapper">
-    <LoadingSpinner class="loading-spinner" />
+    <ProgressNumber v-bind="{ progress }" />
+    <ProgressBar v-bind="{ progress }" />
     <div class="transcription-text-container">
       <span class="upper-text">Переводим в текст.</span>
       <span>Пожалуйста, подождите...</span>
@@ -54,10 +77,6 @@ onMounted(poll);
   gap: 1.25rem;
 
   color: #5b5b5b;
-}
-
-.loading-spinner {
-  width: 4.5rem;
 }
 
 .transcription-text-container {
