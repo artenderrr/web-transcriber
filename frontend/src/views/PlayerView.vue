@@ -16,7 +16,7 @@ function pauseAudio() {
   <div class="wrapper">
     <RestartButton @restart="pauseAudio"/>
     <AudioPlayer ref="audio-player" :src="store.audioUrl" />
-    <TranscribeButton />
+    <TranscribeButton @click="pauseAudio" />
   </div>
 </template>
 
