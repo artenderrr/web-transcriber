@@ -1,9 +1,14 @@
 <script setup>
 import { ref } from "vue";
-import store from "../store";
 import RestartButton from "../components/RestartButton.vue";
+import router from "../router";
+import store from "../store";
 
 const transcriptionFileName = ref(`${Date.now()}.txt`);
+
+function openPreview() {
+  router.push("/preview");
+}
 </script>
 
 <template>
@@ -19,7 +24,7 @@ const transcriptionFileName = ref(`${Date.now()}.txt`);
       </button>
     </a>
     <p class="separator">или</p>
-    <button>
+    <button @click="openPreview">
       <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5M12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5s5 2.24 5 5s-2.24 5-5 5m0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3s3-1.34 3-3s-1.34-3-3-3"/></svg>
       <div class="button-text-container">
         <span>Открыть</span>
