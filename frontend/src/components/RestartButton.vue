@@ -1,12 +1,12 @@
 <script setup>
 import router from "../router";
-import store from "../store";
+import store, { clearStore } from "../store";
 
 const emit = defineEmits(["restart"]);
 
 function onClick() {
   emit("restart");
-  URL.revokeObjectURL(store.audioUrl);
+  clearStore();
   router.push("/");
 }
 </script>
