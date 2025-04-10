@@ -46,11 +46,12 @@ def store_task_id(headers: dict[str, Any] | None = None, **kwargs: Any) -> None:
 def transcribe(audio_path: str) -> str:
     print(f"[LOG] Received '{audio_path}', starting transcription processs...")
     result = cast(Whisper, model).transcribe(audio_path)
+    result_text = result["text"].strip()
     print(f"[LOG] Finished transcribing '{audio_path}', saving results in a file...")
     filename = Path(audio_path).stem
     transcription_file_path = StorageService.save_transcription_result(
         filename=f"{filename}.txt",
-        result=result["text"]
+        result=result_text
     )
     return str(transcription_file_path)
 
