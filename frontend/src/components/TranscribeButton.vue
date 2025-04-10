@@ -4,6 +4,8 @@ import LoadingSpinner from "./LoadingSpinner.vue";
 import router from "../router";
 import store from "../store";
 
+const emit = defineEmits(["request-failure"]);
+
 const isLoading = ref(false);
 
 async function getAudioFormData(audioUrl) {
@@ -18,13 +20,20 @@ async function getAudioFormData(audioUrl) {
 }
 
 async function requestTranscription(formData) {
-  const apiUrl = import.meta.env.VITE_API_URL;
-  const response = await fetch(`${apiUrl}/transcriptions`, {
-    method: "POST",
-    body: formData
-  });
-  const data = await response.json();
-  const taskId = data["task_id"];
+  let taskId;
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const response = await fetch(`${apiUrl}/transcriptions`, {
+      method: "POST",
+      body: formData
+    });
+    const data = await response.json();
+    taskId = data["task_id"];
+  } catch (error) {
+    isLoading.value = false;
+    emit("request-failure");
+    throw error;
+  }
 
   return taskId;
 }
