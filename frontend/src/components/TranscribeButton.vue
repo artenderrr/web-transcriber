@@ -83,7 +83,7 @@ async function onClick() {
   background-color: #2b2b2b;
 
   width: 20rem;
-  height: 7.5rem;
+  height: 7rem;
 
   border: .125rem solid #3b3b3b;
   border-radius: 1.5rem;

@@ -60,18 +60,15 @@ button {
 
   font: inherit;
 
-  width: 22.5rem;
+  width: 20rem;
   height: 7rem;
 
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
 
   border: .125rem solid #3b3b3b;
   border-radius: 1.5rem;
-
-  padding: 1rem;
-  padding-inline: 1.5rem;
 
   cursor: pointer;
 }
@@ -84,8 +81,8 @@ button {
 }
 
 svg {
-  width: 4rem;
-  height: 4rem;
+  width: 3.5rem;
+  height: 3.5rem;
 
   color: #5b5b5b;
 }

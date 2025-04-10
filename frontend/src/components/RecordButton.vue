@@ -89,10 +89,10 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
 
   border: .125rem solid #3b3b3b;
-  border-radius: 1rem;
+  border-radius: 1.5rem;
 
   padding: 1rem;
   padding-inline: 1.5rem;
@@ -101,9 +101,9 @@ button {
 }
 
 .circle {
-  background-color: crimson;
+  background-color: #c9184a;
 
-  width: 1.25rem;
+  width: 1.5rem;
   aspect-ratio: 1 / 1;
 
   border-radius: 50%;
