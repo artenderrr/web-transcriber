@@ -42,8 +42,8 @@ def store_task_id(headers: dict[str, Any] | None = None, **kwargs: Any) -> None:
         print("[LOG] Failed to store task!")
 
 
-@app.task(track_started=True) # type: ignore
-def transcribe(audio_path: str) -> str:
+@app.task(bind=True, track_started=True) # type: ignore
+def transcribe(self: Any, audio_path: str) -> str:
     print(f"[LOG] Received '{audio_path}', starting transcription processs...")
     result = cast(Whisper, model).transcribe(audio_path)
     result_text = result["text"].strip()
@@ -53,6 +53,7 @@ def transcribe(audio_path: str) -> str:
         filename=f"{filename}.txt",
         result=result_text
     )
+    clear_transcription_files_and_metadata.apply_async(args=(self.request.id,), countdown=60)
     return str(transcription_file_path)
 
 def find_audio_file_path_by_stem(stem: str) -> Path:
@@ -65,10 +66,13 @@ def find_audio_file_path_by_stem(stem: str) -> Path:
 @app.task # type: ignore
 def clear_transcription_files_and_metadata(task_id: str) -> None:
     time.sleep(.1)
-    task: AsyncResult = app.AsyncResult(task_id)
-    transcription_file_path = Path(cast(str, task.result))
-    audio_file_path = find_audio_file_path_by_stem(transcription_file_path.stem)
-    audio_file_path.unlink()
-    transcription_file_path.unlink()
-    redis.delete(f"task_{task_id}")
-    print(f"[LOG] Deleted task {task_id} from Redis!")
+    try:
+        task: AsyncResult = app.AsyncResult(task_id)
+        transcription_file_path = Path(cast(str, task.result))
+        audio_file_path = find_audio_file_path_by_stem(transcription_file_path.stem)
+        audio_file_path.unlink()
+        transcription_file_path.unlink()
+        redis.delete(f"task_{task_id}")
+        print(f"[LOG] Deleted task {task_id} from Redis!")
+    except FileNotFoundError:
+        print(f"[LOG] Tried to delete {task_id} files and metadata, but they had already been deleted.")
