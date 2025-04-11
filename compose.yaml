@@ -2,24 +2,14 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - 5173:5173
-    develop:
-      watch:
-        - action: sync
-          path: ./frontend
-          target: /app
+      - 80:80
   backend:
     build: ./backend
     ports:
       - 8000:8000
-    command: /root/.local/bin/uv run uvicorn app.main:app --host 0.0.0.0 --reload
+    command: /root/.local/bin/uv run uvicorn app.main:app --host 0.0.0.0
     volumes:
       - shared-data:/data
-    develop:
-      watch:
-        - action: sync
-          path: ./backend
-          target: /app
   redis:
     image: redis
     ports:
