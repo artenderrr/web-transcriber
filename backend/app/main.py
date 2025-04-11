@@ -1,14 +1,17 @@
 from typing import Annotated, cast
 from fastapi import FastAPI, Path, UploadFile, Depends, HTTPException
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from redis import Redis
 from celery.result import AsyncResult # type: ignore
+from app.core import get_cors_settings
 from app.worker import worker
 from app.worker.tasks import clear_transcription_files_and_metadata
 from app.services.transcription import TranscriptionService
 
 
 app = FastAPI(title="Transcription API")
+app.add_middleware(CORSMiddleware, **get_cors_settings())
 
 redis = Redis(host="redis", port=6379, db=0)
 
