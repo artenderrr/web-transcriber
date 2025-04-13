@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { fetchState, fetchResult } from "../utils";
+import { fetchState, fetchResult, convertTextBlobToDocBlob } from "../utils";
 import ProgressNumber from "../components/ProgressNumber.vue";
 import ProgressBar from "../components/ProgressBar.vue";
 import ErrorModal from "../components/ErrorModal.vue";
@@ -15,7 +15,10 @@ async function poll() {
   if (state.value === "SUCCESS") {
     progress.value = 100;
     const [blob, text] = await fetchResult(store.taskId);
-    store.transcriptionUrl = URL.createObjectURL(blob);
+    store.transcriptionTextUrl = URL.createObjectURL(blob);
+    store.transcriptionDocumentUrl = URL.createObjectURL(
+      await convertTextBlobToDocBlob(blob)
+    );
     store.transcriptionText = text;
     router.push("/result");
   } else if (state.value === "STARTED") {
