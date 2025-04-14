@@ -60,11 +60,6 @@ function openPreview() {
   margin-bottom: .25rem;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
 button {
   background-color: #2b2b2b;
   color: inherit;
