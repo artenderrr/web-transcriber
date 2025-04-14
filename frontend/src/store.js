@@ -4,7 +4,8 @@ const store = reactive({
   audioUrl: null,
   audioDuration: null,
   taskId: null,
-  transcriptionUrl: null,
+  transcriptionTextUrl: null,
+  transcriptionDocumentUrl: null,
   transcriptionText: null
 });
 
@@ -16,7 +17,8 @@ function resetStore() {
 
 function revokeUrls() {
   URL.revokeObjectURL(store.audioUrl);
-  URL.revokeObjectURL(store.transcriptionUrl);
+  URL.revokeObjectURL(store.transcriptionTextUrl);
+  URL.revokeObjectURL(store.transcriptionDocumentUrl);
 }
 
 export function clearStore() {
