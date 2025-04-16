@@ -1,3 +1,4 @@
+import html2pdf from "html2pdf.js";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -67,4 +68,16 @@ export async function convertTextBlobToDocBlob(blob) {
   });
   const docBlob = await Packer.toBlob(doc);
   return docBlob;
+}
+
+export async function convertTextToPDFBlob(text) {
+  const html = `<p style="
+  color: black;
+  font-family: Times New Roman;
+  font-size: 1.5rem;
+  line-height: 2;
+  padding: 3rem;
+  ">${text}</p>`;
+  const PDFBlob = await html2pdf().from(html).output("blob");
+  return PDFBlob;
 }

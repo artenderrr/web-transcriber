@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { fetchState, fetchResult, convertTextBlobToDocBlob } from "../utils";
+import { fetchState, fetchResult } from "../utils";
+import { convertTextBlobToDocBlob, convertTextToPDFBlob } from "../utils";
 import ProgressNumber from "../components/ProgressNumber.vue";
 import ProgressBar from "../components/ProgressBar.vue";
 import ErrorModal from "../components/ErrorModal.vue";
@@ -18,6 +19,9 @@ async function poll() {
     store.transcriptionTextUrl = URL.createObjectURL(blob);
     store.transcriptionDocumentUrl = URL.createObjectURL(
       await convertTextBlobToDocBlob(blob)
+    );
+    store.transcriptionPDFUrl = URL.createObjectURL(
+      await convertTextToPDFBlob(text)
     );
     store.transcriptionText = text;
     router.push("/result");
