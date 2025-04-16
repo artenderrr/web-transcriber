@@ -21,6 +21,9 @@ onClickOutside(modalContainer, () => emit("unfocus"));
         <a :href="store.transcriptionDocumentUrl" :download="`${Date.now()}.docx`">
           <button @click="$emit('unfocus')">.docx</button>
         </a>
+        <a :href="store.transcriptionPDFUrl" :download="`${Date.now()}.pdf`">
+          <button @click="$emit('unfocus')">.pdf</button>
+        </a>
       </div>
     </div>
   </div>
@@ -51,13 +54,13 @@ onClickOutside(modalContainer, () => emit("unfocus"));
   background-color: #2b2b2b;
 
   width: 22.5rem;
-  height: 12.5rem;
+  height: 22.5rem;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem;
 
   border: .125rem solid #3b3b3b;
   border-radius: 1.5rem;
@@ -65,6 +68,7 @@ onClickOutside(modalContainer, () => emit("unfocus"));
 
 .file-formats-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 1.25rem;
@@ -82,7 +86,7 @@ button {
   font-size: inherit;
   font-family: monospace;
 
-  width: 8rem;
+  width: 17.5rem;
   height: 3.5rem;
 
   border: .125rem solid #4b4b4b;
