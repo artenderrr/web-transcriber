@@ -96,6 +96,22 @@ function splitByWidth({ text, font, size, maxLineWidth }) {
   return lines;
 }
 
+function splitIntoPages({ lines, linesPerPage }) {
+  const pages = [];
+  let page = [];
+
+  for (let line of lines) {
+    page.push(line);
+    if (page.length === linesPerPage) {
+      pages.push(page);
+      page = [];
+    }
+  }
+  if (page.length) pages.push(page);
+
+  return pages;
+}
+
 export async function convertTextToPDFBlob(text) {
   const html = `<p style="
   color: black;
