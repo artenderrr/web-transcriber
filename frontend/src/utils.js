@@ -1,4 +1,5 @@
 import html2pdf from "html2pdf.js";
+import { PDFDocument } from "pdf-lib";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -112,6 +113,17 @@ function splitIntoPages({ lines, linesPerPage }) {
   return pages;
 }
 
+async function getPDFWithoutLastPage(pdfBlob) {
+  const arrayBuffer = await pdfBlob.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(arrayBuffer);
+
+  const pageCount = pdfDoc.getPageCount();
+  pdfDoc.removePage(pageCount - 1);
+
+  const pdfBytes = await pdfDoc.save();
+  return new Blob([pdfBytes], { type: "application/pdf" });
+}
+
 export async function convertTextToPDFBlob(text) {
   const [font, size, maxLineWidth] = ["Times New Roman", 1.5, 42.5];
 
@@ -158,6 +170,7 @@ export async function convertTextToPDFBlob(text) {
 
   ${pageElements}`;
 
-  const PDFBlob = await html2pdf().from(html).output("blob");
+  let PDFBlob = await html2pdf().from(html).output("blob");
+  PDFBlob = getPDFWithoutLastPage(PDFBlob);
   return PDFBlob;
 }
