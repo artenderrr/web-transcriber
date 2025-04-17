@@ -70,7 +70,7 @@ export async function convertTextBlobToDocBlob(blob) {
   return docBlob;
 }
 
-function splitByWidth({ text, font, size, maxLineWidth }) {
+function splitIntoLines({ text, font, size, maxLineWidth }) {
   const rmSize = 16;
   [size, maxLineWidth] = [size * rmSize, maxLineWidth * rmSize];
 
@@ -113,13 +113,49 @@ function splitIntoPages({ lines, linesPerPage }) {
 }
 
 export async function convertTextToPDFBlob(text) {
-  const html = `<p style="
-  color: black;
-  font-family: Times New Roman;
-  font-size: 1.5rem;
-  line-height: 2;
-  padding: 3rem;
-  ">${text}</p>`;
+  const [font, size, maxLineWidth] = ["Times New Roman", 1.5, 42.5];
+
+  const lines = splitIntoLines({ text, font, size, maxLineWidth });
+  const pages = splitIntoPages({ lines, linesPerPage: 21 });
+
+  const pageElements = pages.reduce((res, page) => {
+    const paragraphs = page.reduce((res, line) => {
+      return res.concat([`<p>${line}</p>`]);
+    }, []).join("");
+    return res.concat([`<div class="page">${paragraphs}</div>`]);
+  }, []).join("");
+
+  const html = `
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    .page {
+      width: 210mm;
+      height: 297mm;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+
+      padding: 3.5rem;
+    }
+
+    p {
+      color: black;
+      font-family: ${font};
+      font-size: ${size}rem;
+      line-height: 2;
+      break-inside: avoid;
+    }
+  </style>
+
+  ${pageElements}`;
+
   const PDFBlob = await html2pdf().from(html).output("blob");
   return PDFBlob;
 }
