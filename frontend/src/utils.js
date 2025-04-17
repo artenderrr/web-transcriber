@@ -70,6 +70,32 @@ export async function convertTextBlobToDocBlob(blob) {
   return docBlob;
 }
 
+function splitByWidth({ text, font, size, maxLineWidth }) {
+  const rmSize = 16;
+  [size, maxLineWidth] = [size * rmSize, maxLineWidth * rmSize];
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  ctx.font = `${size}px ${font}`;
+
+  const words = text.split(" ");
+  const lines = [];
+  let line = [];
+  for (const word of words) {
+    const lineString = line.concat([word]).join(" ");
+    const lineWidth = ctx.measureText(lineString).width;
+    if (lineWidth <= maxLineWidth) {
+      line.push(word);
+    } else {
+      lines.push(line.join(" "));
+      line = [word];
+    }
+  }
+  if (line.length) lines.push(line.join(" "));
+
+  return lines;
+}
+
 export async function convertTextToPDFBlob(text) {
   const html = `<p style="
   color: black;
