@@ -18,7 +18,7 @@ function pauseAudio() {
   <div class="wrapper">
     <RestartButton @restart="pauseAudio"/>
     <AudioPlayer ref="audio-player" :src="store.audioUrl" />
-    <TranscribeButton @click="pauseAudio" @request-failure="requestFailed = true" />
+    <TranscribeButton @request-success="pauseAudio" @request-failure="requestFailed = true" />
     <Transition name="fade">
       <ErrorModal v-if="requestFailed"
       header-content="Ой..."

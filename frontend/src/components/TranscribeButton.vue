@@ -4,7 +4,7 @@ import LoadingSpinner from "./LoadingSpinner.vue";
 import router from "../router";
 import store from "../store";
 
-const emit = defineEmits(["request-failure"]);
+const emit = defineEmits(["request-success", "request-failure"]);
 
 const isLoading = ref(false);
 
@@ -48,6 +48,7 @@ async function onClick() {
 
     isLoading.value = false;
 
+    emit("request-success");
     router.push("/pending");
   }
 }
